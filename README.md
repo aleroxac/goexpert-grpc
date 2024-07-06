@@ -26,7 +26,7 @@
 | Relacionamento | Uniderecional  | Bi-direcional e Assíncrono  |
 | Latência       | Alta latência  | Baixa latência              |
 | Contrato       | Sem contrato   | Tem contrato                |
-| Streaming      | Sem suporta    | Tem suporte                 |
+| Streaming      | Sem suporte    | Tem suporte                 |
 | Design         | Pré-definido   | Livre                       |
 | Bibliotecas    | Terceiros      | Nativa                      |
 
@@ -46,26 +46,37 @@ sudo mv evans /usr/local/bin
 ```
 
 ## Como trabalhar com gRPC no go
-1. Crie uma pasta com os arquivos proto para cada uma de suas entidades
-2. Gere os binários via protoc
 ``` shell
+### 1. Crie uma [pasta com os arquivos proto para cada uma de suas entidades](proto/course_category.proto)
+
+### 2. Gere os binários via protoc
 protoc --go_out=. --go-grpc_out=. proto/course_category.proto
-go mod tidy
-```
-3. Implementar os services com base nas interfaces geradas em course_category_grpc.pb.go(com "not implemented")
-4. Criar as tabelas
-``` shell
-sqlite3 db.sqlite 'create table categories (id string, name string, description string);' 
-```
-5. Subir o server
-``` shell
+
+### 3. Implemente os [services](internal/service/category.go) com base nas [interfaces auto-geradas pelo protoc](internal/pb/course_category_grpc.pb.go) 'not implemented'
+
+### 5. Suba o server
 go run cmd/grpcServer/main.go
-```
-6. Rodar o evans
-``` shell
+
+### 6. Use evans para chamar os services do app
 evans --proto proto/course_category.proto --host localhost --port 50051
 => call CreateCategory
 => name1
 => desc1
-...
+```
+
+
+
+## Como rodar o projeto
+``` shell
+### 1. Crie a tabela
+sqlite3 db.sqlite 'create table categories (id string, name string, description string);'
+
+### 5. Suba o server
+go run cmd/grpcServer/main.go
+
+### 6. Use evans para chamar os services do app
+evans --proto proto/course_category.proto --host localhost --port 50051
+=> call CreateCategory
+=> name1
+=> desc1
 ```
